@@ -33,7 +33,7 @@ body {
   animation: fadeIn 0.8s ease-in-out;
 }
 
-.card h1 {
+h1 {
   font-size: 2rem;
   margin-bottom: 20px;
 }
@@ -45,8 +45,6 @@ body {
 
 /* Button */
 button {
-  background: #ff4757;
-  color: #fff;
   border: none;
   padding: 14px 24px;
   font-size: 1.2rem;
@@ -55,13 +53,42 @@ button {
   transition: 0.3s ease;
 }
 
+button.mic-off {
+  background: #ff4757;
+  color: #fff;
+}
+
+button.mic-on {
+  background: #2ed573 !important;
+  color: #fff;
+}
+
 button:hover {
-  background: #ff6b81;
   transform: scale(1.05);
 }
 
 button:active {
   transform: scale(0.95);
+}
+
+/* Microphone Indicator */
+.mic-indicator {
+  margin-top: 15px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff4757;
+  display: none;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.8);
+  margin-left: auto;
+  margin-right: auto;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
 }
 
 /* Response Text */
@@ -74,26 +101,13 @@ button:active {
 
 /* Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-  .card {
-    padding: 20px;
-  }
-  button {
-    width: 100%;
-    font-size: 1rem;
-  }
-  .instructions {
-    font-size: 0.9rem;
-  }
+  .card { padding: 20px; }
+  button { width: 100%; font-size: 1rem; }
+  .instructions { font-size: 0.9rem; }
 }

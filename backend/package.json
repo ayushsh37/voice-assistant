@@ -1,12 +1,21 @@
 {
-  "name": "backend",
+  "name": "revolt-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend for voice assistant",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "@google/genai": "^0.2.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "wavefile": "^9.1.0",
+    "ws": "^8.13.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
