@@ -1,3 +1,99 @@
-body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-#response { margin-top: 20px; font-size: 18px; color: #333; }
+/* Global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Container */
+.container {
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Card */
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.card h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.instructions {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+/* Button */
+button {
+  background: #ff4757;
+  color: #fff;
+  border: none;
+  padding: 14px 24px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background: #ff6b81;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Response Text */
+.response {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #ffeaa7;
+  word-break: break-word;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .card {
+    padding: 20px;
+  }
+  button {
+    width: 100%;
+    font-size: 1rem;
+  }
+  .instructions {
+    font-size: 0.9rem;
+  }
+}
