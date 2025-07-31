@@ -2,7 +2,7 @@ let ws;
 let isAIResponding = false;
 
 document.getElementById("startBtn").addEventListener("click", () => {
-  ws = new WebSocket("wss://YOUR-BACKEND-URL"); // update later after deployment
+  ws = new WebSocket("https://voice-assistant-eij7.onrender.com/"); // update later after deployment
 
   ws.onmessage = (msg) => {
     const data = JSON.parse(msg.data);
