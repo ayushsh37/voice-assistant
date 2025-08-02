@@ -1,60 +1,46 @@
-import { GoogleGenAI, Modality } from '@google/genai';
-import pkg from 'wavefile';
-const { WaveFile } = pkg;
+import express from "express";
+import multer from "multer";
+import WavDecoder from "wav-decoder";
+import session from "../geminiSession.js"; // assuming you have session initialized separately
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const router = express.Router();
+const upload = multer();
 
-export default async function geminiHandler(audioBase64) {
-  // Convert received audio to PCM 16kHz mono
-  const wav = new WaveFile();
-  wav.fromBase64(audioBase64);
-  wav.toSampleRate(16000);
-  wav.toBitDepth("16");
-  const pcmBase64 = wav.toBase64();
-
-  const responseQueue = [];
-  const session = await ai.live.connect({
-    model: "gemini-2.5-flash-preview-native-audio-dialog",
-    config: { responseModalities: [Modality.AUDIO] },
-    callbacks: {
-      onmessage: (msg) => responseQueue.push(msg),
-      onclose: () => console.log("Gemini session closed"),
-      onerror: (e) => console.error("Gemini error:", e.message)
+router.post("/send-audio", upload.single("audio"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No audio file uploaded" });
     }
-  });
 
-  // Send user audio to Gemini
-  session.sendRealtimeInput({
-    audio: {
-      data: pcmBase64,
-      mimeType: "audio/pcm;rate=16000"
+    const buffer = req.file.buffer;
+
+    // Decode WAV
+    const decoded = await WavDecoder.decode(buffer);
+    const samples = decoded.channelData[0];
+
+    // Convert Float32 [-1,1] → Int16 PCM
+    const pcmInt16 = new Int16Array(samples.length);
+    for (let i = 0; i < samples.length; i++) {
+      const s = Math.max(-1, Math.min(1, samples[i]));
+      pcmInt16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
     }
-  });
 
-  // Wait for response
-  const turns = await new Promise((resolve) => {
-    const check = setInterval(() => {
-      if (responseQueue.find(m => m.serverContent?.turnComplete)) {
-        clearInterval(check);
-        resolve(responseQueue);
+    // Convert PCM to Base64
+    const pcmBase64 = Buffer.from(pcmInt16.buffer).toString("base64");
+
+    // Send to Gemini as PCM
+    await session.sendRealtimeInput({
+      audio: {
+        data: pcmBase64,
+        mimeType: "audio/pcm;rate=16000"
       }
-    }, 100);
-  });
+    });
 
-  session.close();
+    res.status(200).json({ success: true, message: "Audio processed and sent to Gemini" });
+  } catch (error) {
+    console.error("Error processing audio:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  // Combine received audio chunks
-  const combinedAudio = turns.reduce((acc, turn) => {
-    if (turn.data) {
-      const buffer = Buffer.from(turn.data, 'base64');
-      const intArray = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
-      return acc.concat(Array.from(intArray));
-    }
-    return acc;
-  }, []);
-
-  return {
-    text: "Voice response generated",  // (You can parse actual text when supported)
-    audio: Buffer.from(new Int16Array(combinedAudio).buffer).toString('base64')
-  };
-}
+export default router;
